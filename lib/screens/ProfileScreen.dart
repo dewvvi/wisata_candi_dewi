@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import '../widgets/profile_info_item.dart';
+import 'package:provider/provider.dart';
+import 'package:wisata_candi_dewi/providers/favorite_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,7 +16,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isSignedIn = false;
   String fullName = '';
   String userName = '';
-  int favoriteCandiCount = 0;
 
   void signIn() {
     setState(() {
@@ -30,6 +31,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final favoriteCount =
+    context.watch<FavoriteProvider>().count;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -112,9 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileInfoItem(
                       icon: Icons.favorite,
                       label: 'Favorit',
-                      value: favoriteCandiCount > 0
-                          ? '$favoriteCandiCount'
-                          : '',
+                      value: favoriteCount > 0 ? '$favoriteCount' : '',
                       iconColor: Colors.red,
                     ),
                     const SizedBox(height: 4),
