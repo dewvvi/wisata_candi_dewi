@@ -1,38 +1,21 @@
 
 import 'package:flutter/material.dart';
-import '../widgets/profile_info_item.dart';
 import 'package:provider/provider.dart';
+import '../widgets/profile_info_item.dart';
 import 'package:wisata_candi_dewi/providers/favorite_provider.dart';
+import 'package:wisata_candi_dewi/providers/auth_provider.dart';
+import 'sign_in_screen.dart';
 
-class ProfileScreen extends StatefulWidget {
+
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
-  @override
-  State<ProfileScreen> createState() =>
-      _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  bool isSignedIn = false;
-  String fullName = '';
-  String userName = '';
-
-  void signIn() {
-    setState(() {
-      isSignedIn = !isSignedIn;
-    });
-  }
-
-  void signOut() {
-    setState(() {
-      isSignedIn = !isSignedIn;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final favoriteCount =
-    context.watch<FavoriteProvider>().count;
+        context.watch<FavoriteProvider>().count;
+
+    final auth = context.watch<AuthProvider>();
 
     return Scaffold(
       body: Stack(
@@ -68,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-                      if (isSignedIn)
+                      if (auth.isSignedIn)
                         IconButton(
                           onPressed: () {},
                           icon: Icon(
@@ -90,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileInfoItem(
                       icon: Icons.lock,
                       label: 'Pengguna',
-                      value: userName,
+                      value: auth.username,
                       iconColor: Colors.amber,
                     ),
                     const SizedBox(height: 4),
@@ -100,12 +83,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileInfoItem(
                       icon: Icons.person,
                       label: 'Nama',
-                      value: fullName,
-                      showEditIcon: isSignedIn,
+                      value: '',
+                      showEditIcon: auth.isSignedIn,
                       onEditPressed: () {
-                        debugPrint(
-                          'Icon edit ditekan',
-                        );
+                        debugPrint('Icon edit ditekan');
                       },
                       iconColor: Colors.blue,
                     ),
@@ -116,7 +97,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileInfoItem(
                       icon: Icons.favorite,
                       label: 'Favorit',
-                      value: favoriteCount > 0 ? '$favoriteCount' : '',
+                      value: favoriteCount > 0
+                          ? '$favoriteCount'
+                          : '',
                       iconColor: Colors.red,
                     ),
                     const SizedBox(height: 4),
@@ -124,15 +107,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.deepPurple[100],
                     ),
                     const SizedBox(height: 20),
-                    isSignedIn
+                    auth.isSignedIn
                         ? TextButton(
-                      onPressed: signOut,
-                      child: const Text('Sign Out'),
-                    )
+                            onPressed: () {
+                              context
+                                  .read<AuthProvider>()
+                                  .signOut();
+                            },
+                            child: const Text('Sign Out'),
+                          )
                         : TextButton(
-                      onPressed: signIn,
-                      child: const Text('Sign In'),
-                    ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => SignInScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text('Sign In'),
+                          ),
                   ],
                 ),
               ),

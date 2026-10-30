@@ -2,9 +2,7 @@ import 'package:flutter/foundation.dart';
  
 class FavoriteProvider extends ChangeNotifier {
   final Set<String> _favorites = {};
- 
   int get count => _favorites.length;
- 
   bool isFavorite(String name) =>
       _favorites.contains(name);
  
@@ -14,6 +12,12 @@ class FavoriteProvider extends ChangeNotifier {
     } else {
       _favorites.add(name);
     }
+    notifyListeners();
+  }
+
+  // Fungsi tambahan
+  void clearAll() {
+    _favorites.clear();
     notifyListeners();
   }
 }
